@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-const kAppName = 'Vendora';
-const kThemeColor = Colors.blueAccent;
+const String kAppName = 'Vendora';
+const Color kThemeColor = Colors.blueAccent;
+const Widget kTextFieldSpacing = SizedBox(height: 10.0, width: double.infinity);
 // boxShadow: [
 // BoxShadow(
 // color: Colors.grey.withOpacity(0.3),
@@ -77,4 +78,14 @@ const Map<int, Map<String, String>?> kCategories = {
     'img': 'images/vendor-categories/red-carpet.png',
     'caption': 'Wedding, Events & Meetings'
   }
+};
+
+Map<String, String> errorMsg = {
+  'firstName': 'First name must be alphabet and greater than two characters',
+  'lastName': 'Last name must be alphabet and greater than two characters',
+  'email': 'It seems you didn\'t type a valid email address',
+  'password':
+      'Password should be at least 8 characters and contain at least one letter and number',
+  'phone': 'You must have typed an invalid phone number. Try again!',
+  'confirmPassword': 'Password does not match',
 };

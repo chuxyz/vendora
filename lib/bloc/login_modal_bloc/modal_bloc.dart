@@ -51,6 +51,7 @@ class ModalBloc extends Bloc<ModalEvent, ModalState> {
         formVisibility: true,
       );
     } else if (event is SignUpButtonEvent) {
+      //yield state.copyWith();
     } else if (event is AuthenticationEvent) {}
   }
 }

@@ -15,6 +15,7 @@ class ModalState extends Equatable {
   final String modalActionText;
   final ModalStatus submitAction;
   final bool formVisibility;
+  //static String registerRoute = RegisterScreen.routeID;
 
   ModalState copyWith({
     String? googleButtonText,

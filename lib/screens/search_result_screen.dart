@@ -17,6 +17,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     return Scaffold(
       appBar: new SearchBar(),
       body: Container(),
+      bottomNavigationBar: FootNavigationBar(navBarIndex: 0),
     );
   }
 }

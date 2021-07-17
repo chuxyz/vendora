@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:vendora/components/custom_button.dart';
+import 'package:vendora/screens/register_screen.dart';
 import 'package:vendora/utilities/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vendora/bloc/login_modal_bloc/modal_bloc.dart';
@@ -6,11 +8,11 @@ import 'package:vendora/bloc/login_modal_bloc/modal_bloc.dart';
 class FootNavigationBar extends StatelessWidget {
   FootNavigationBar({
     Key? key,
-    required int navBarIndex,
+    int? navBarIndex,
   })  : _navBarIndex = navBarIndex,
         super(key: key);
 
-  final int _navBarIndex;
+  final int? _navBarIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class FootNavigationBar extends StatelessWidget {
       create: (context) => ModalBloc(),
       child: BlocBuilder<ModalBloc, ModalState>(
         builder: (context, state) => BottomNavigationBar(
-          currentIndex: _navBarIndex,
+          currentIndex: _navBarIndex!,
           selectedItemColor: kThemeColor,
           onTap: (int index) {
             showModalBottomSheet(
@@ -175,21 +177,15 @@ class FootNavigationBar extends StatelessWidget {
                             ),
                             SizedBox(
                               width: double.infinity,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: kThemeColor,
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 5, vertical: 15),
-                                  textStyle: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                              child: CustomButton(
+                                buttonLabel: state.loginButtonText,
                                 onPressed: () {
                                   switch (state.submitAction) {
                                     case ModalStatus.Register:
-                                      BlocProvider.of<ModalBloc>(context)
-                                          .add(SignUpButtonEvent());
+                                      //BlocProvider.of<ModalBloc>(context)
+                                      //.add(SignUpButtonEvent());
+                                      Navigator.pushNamed(
+                                          context, RegisterScreen.routeID);
                                       break;
                                     case ModalStatus.None:
                                       BlocProvider.of<ModalBloc>(context)
@@ -197,7 +193,6 @@ class FootNavigationBar extends StatelessWidget {
                                       break;
                                   }
                                 },
-                                child: Text('${state.loginButtonText}'),
                               ),
                             ),
                             SizedBox(height: 6.0),
