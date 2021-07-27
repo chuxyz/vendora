@@ -1,10 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:vendora/components/theme_data.dart';
 import 'package:vendora/screens/register_screen.dart';
 import 'package:vendora/screens/start_screen.dart';
 import 'package:vendora/screens/search_result_screen.dart';
 import 'package:vendora/utilities/constants.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  //await FirebaseAuth.instance.useAuthEmulator('127.0.0.1', 9101);
   runApp(MyApp());
 }
 
@@ -13,12 +20,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext _) {
     return MaterialApp(
-      title: '$kAppName',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      title: '$kAppName', // App name
+      theme: lightTheme,
       initialRoute: StartScreen.routeID,
+      // Define routes
       routes: {
         StartScreen.routeID: (context) => StartScreen(),
         SearchResultScreen.routeID: (context) => SearchResultScreen(),

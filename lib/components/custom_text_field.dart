@@ -25,6 +25,8 @@ class CustomTextField extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
       child: TextFormField(
+        autocorrect: true,
+        keyboardType: TextInputType.visiblePassword,
         onChanged: this.onChanged,
         textInputAction: textInputAction ?? null,
         focusNode: this.focusNode,

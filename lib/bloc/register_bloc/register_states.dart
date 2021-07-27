@@ -9,6 +9,7 @@ class RegisterStates extends Equatable {
     required this.confirmPassword,
     required this.phone,
     this.formStatus = FormStatus.invalid,
+    this.registerStatus = RegisterStatus.initial,
     this.errorText = const {
       'firstName': null,
       'lastName': null,
@@ -26,28 +27,9 @@ class RegisterStates extends Equatable {
   final String? confirmPassword;
   final String? phone;
   final FormStatus formStatus;
+  final RegisterStatus registerStatus;
   //final Map<String, bool> formValidated;
   final Map<String, String?> errorText;
-  // final Map<String, bool> formValidated = {
-  //   'firstName': false,
-  //   'lastName': false,
-  //   'email': false,
-  //   'password': false,
-  //   'confirmPassword': false,
-  //   'phone': false,
-  // };
-  // Map<String, String?> errorText = {
-  //   'firstName': null,
-  //   'lastName': null,
-  //   'email': null,
-  //   'password': null,
-  //   'confirmPassword': null,
-  //   'phone': null,
-  // };
-
-  // bool canSubmit() {
-  //   //return !formValidated.containsValue(false);
-  // }
 
   RegisterStates copyWith({
     String? firstName,
@@ -57,6 +39,7 @@ class RegisterStates extends Equatable {
     String? confirmPassword,
     String? phone,
     FormStatus? formStatus,
+    RegisterStatus? registerStatus,
     Map<String, String?>? errorText,
   }) {
     return RegisterStates(
@@ -67,6 +50,7 @@ class RegisterStates extends Equatable {
       confirmPassword: confirmPassword ?? this.confirmPassword,
       phone: phone ?? this.phone,
       formStatus: formStatus ?? this.formStatus,
+      registerStatus: registerStatus ?? this.registerStatus,
       errorText: errorText ?? this.errorText,
     );
   }
@@ -80,6 +64,7 @@ class RegisterStates extends Equatable {
         confirmPassword,
         phone,
         formStatus,
+        registerStatus,
         errorText,
       ];
 }

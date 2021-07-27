@@ -9,32 +9,36 @@ class SearchBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      elevation: 20.0,
-      title: Container(
-        height: 45.0,
-        child: TextField(
-          decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(top: 5, left: 15),
-            suffixIcon: IconButton(
-              color: kThemeColor,
-              icon: Icon(Icons.search),
-              onPressed: () {
-                print('Searching...');
-              },
-            ),
-            prefixIcon: BackButton(
-              color: kThemeColor,
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            filled: true,
-            fillColor: Colors.white,
-            hintText: 'Search',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(5.0),
+    return PreferredSize(
+      preferredSize: Size.fromHeight(50.0),
+      child: AppBar(
+        automaticallyImplyLeading: false,
+        elevation: 20.0,
+        title: Container(
+          margin: EdgeInsets.symmetric(vertical: 15.0),
+          height: 45.0,
+          child: TextField(
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.only(top: 5, left: 15),
+              suffixIcon: IconButton(
+                color: kThemeColor,
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  print('Searching...');
+                },
+              ),
+              prefixIcon: BackButton(
+                color: kThemeColor,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              filled: true,
+              fillColor: Colors.white,
+              hintText: 'Search',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
             ),
           ),
         ),

@@ -1,7 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:vendora/bloc/login_modal_bloc/modal_bloc.dart';
+import 'package:vendora/bloc/vendor_search_bloc/vendor_search_bloc.dart';
 import 'package:vendora/components/foot_navigation_bar.dart';
 import 'package:vendora/components/search_bar.dart';
 import 'package:vendora/screens/search_result_screen.dart';
+import 'package:vendora/utilities/authentication.dart';
 import 'package:vendora/utilities/constants.dart';
 import 'search_screen.dart';
 
@@ -15,33 +21,39 @@ class StartScreen extends StatefulWidget {
 }
 
 class _StartScreenState extends State<StartScreen> {
-  int _navBarIndex = 0;
+  final int _navBarIndex = 0;
+  final ModalBloc modalBloc = ModalBloc();
 
-  FocusNode _searchFocus = FocusNode();
-  //final List<String> vendorList;
-
-  _StartScreenState() : super();
-
+  late bool _isVisible;
+  late ScrollController _hideBottomNavController;
   @override
   void initState() {
-    _searchFocus.addListener(_onSearchFocus);
     super.initState();
-  }
-
-  void _onSearchFocus() {
-    Navigator.pushNamed(context, SearchResultScreen.routeID);
-  }
-
-  @override
-  void deactivate() {
-    _searchFocus.dispose();
-    print('Hey');
-    super.deactivate();
+    _isVisible = true;
+    _hideBottomNavController = ScrollController();
+    _hideBottomNavController.addListener(() {
+      if (_hideBottomNavController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_isVisible) {
+          setState(() {
+            _isVisible = false;
+          });
+        }
+      }
+      if (_hideBottomNavController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_isVisible) {
+          setState(() {
+            _isVisible = true;
+          });
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
-    _searchFocus.dispose();
+    _hideBottomNavController.dispose();
     super.dispose();
   }
 
@@ -51,74 +63,111 @@ class _StartScreenState extends State<StartScreen> {
       child: Scaffold(
         backgroundColor: Color(0xFFEEEEEE),
         resizeToAvoidBottomInset: false,
-        body: StartScreenView(),
-        //bottomNavigationBar: FootNavigationBar(navBarIndex: _navBarIndex),
+        body: BlocProvider(
+          child: StartScreenView(scrollController: _hideBottomNavController),
+          create: (_) => this.modalBloc,
+        ),
+        bottomNavigationBar: AnimatedContainer(
+          duration: Duration(milliseconds: 500),
+          height: _isVisible ? 54.0 : 0.0,
+          child: Wrap(
+            children: [
+              FootNavigationBar(
+                navBarIndex: _navBarIndex,
+                bloc: this.modalBloc,
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
-class StartScreenView extends StatelessWidget {
-  const StartScreenView({
-    Key? key,
-  }) : super(key: key);
+class StartScreenView extends StatefulWidget {
+  StartScreenView({Key? key, required this.scrollController}) : super(key: key);
+
+  final ScrollController scrollController;
+
+  @override
+  _StartScreenViewState createState() => _StartScreenViewState();
+}
+
+class _StartScreenViewState extends State<StartScreenView> {
+  final Authentication auth = Authentication();
 
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
+      controller: widget.scrollController,
+      shrinkWrap: true,
       slivers: <Widget>[
-        SliverAppBar(
-          pinned: true,
-          stretch: true,
-          expandedHeight: 150.0,
-          centerTitle: true,
-          flexibleSpace: Center(
-            child: Text(
-              'What are you looking for?',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 20.0,
-              ),
-            ),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(0.0),
-            child: AppBar(
-              elevation: 20.0,
-              title: Container(
-                height: 45.0,
-                child: TextFormField(
-                  onTap: () async {
-                    //Navigator.pushNamed(
-                    //context, SearchResultScreen.routeID);
-                    await showSearch<String>(
-                      context: context,
-                      delegate: VendorSearchDelegate(),
-                    );
-                  },
-                  readOnly: true,
-                  autofocus: false,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(top: 5, left: 15),
-                    suffixIcon: IconButton(
-                      color: kThemeColor,
-                      icon: Icon(Icons.search),
+        BlocBuilder<ModalBloc, ModalState>(
+          builder: (context, state) {
+            return SliverAppBar(
+              pinned: true,
+              stretch: true,
+              expandedHeight: 150.0,
+              centerTitle: true,
+              leading: auth.isLogin()
+                  ? TextButton(
                       onPressed: () {
-                        print('Searching...');
+                        BlocProvider.of<ModalBloc>(context).add(LoggedOut());
                       },
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'Search',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
+                      child: Icon(
+                        Icons.account_circle,
+                        size: 30.0,
+                      ),
+                    )
+                  : null,
+              flexibleSpace: Center(
+                child: Text(
+                  'What are you looking for?',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ),
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(0.0),
+                child: AppBar(
+                  title: Container(
+                    margin: EdgeInsets.symmetric(vertical: 5.0),
+                    child: TextFormField(
+                      onTap: () async {
+                        Navigator.pushNamed(context, SearchResultScreen.routeID,
+                            arguments: {'vendorCategoryId': 0});
+                        // await showSearch<Vendor>(
+                        //   context: context,
+                        //   delegate: VendorSearchDelegate(
+                        //     context: context,
+                        //     bloc: BlocProvider.of<VendorSearchBloc>(context),
+                        //   ),
+                        // );
+                      },
+                      readOnly: true,
+                      autofocus: false,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.only(top: 5, left: 15),
+                        suffixIcon: IconButton(
+                          color: kThemeColor,
+                          icon: Icon(Icons.search),
+                          onPressed: () {},
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        hintText: 'Search',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         ),
         SliverPadding(
           padding: EdgeInsets.all(5.0),
@@ -132,34 +181,43 @@ class StartScreenView extends StatelessWidget {
             ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
-                return Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      SizedBox(height: 20.0),
-                      Expanded(
-                        child: Image.asset(
-                          kCategories[index + 1]!['img'].toString(),
-                          height: 60.0,
-                          width: 60.0,
+                int vendorCategoryId = index + 1;
+                return GestureDetector(
+                  onTap: () {
+                    print(vendorCategoryId);
+                    Navigator.pushNamed(context, SearchResultScreen.routeID,
+                        arguments: {'vendorCategoryId': vendorCategoryId});
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SizedBox(height: 20.0),
+                        Expanded(
+                          child: Image.asset(
+                            kCategories[vendorCategoryId]!['img'].toString(),
+                            height: 60.0,
+                            width: 60.0,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 10.0),
-                      Text(
-                        kCategories[index + 1]!['caption'].toString(),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w500,
+                        SizedBox(height: 10.0),
+                        Text(
+                          kCategories[vendorCategoryId]!['caption'].toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Theme.of(context).accentColor,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 20.0),
-                    ],
+                        SizedBox(height: 20.0),
+                      ],
+                    ),
                   ),
                 );
               },

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:vendora/utilities/constants.dart';
@@ -6,6 +8,7 @@ part 'register_events.dart';
 part 'register_states.dart';
 
 enum FormStatus { valid, invalid }
+enum RegisterStatus { initial, loading, error, success }
 
 class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
   RegisterBloc()
@@ -18,6 +21,7 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
             confirmPassword: null,
             phone: null,
             errorText: {},
+            registerStatus: RegisterStatus.initial,
           ),
         );
 
@@ -49,11 +53,14 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
     return phoneRegex.hasMatch(phone ?? '') ? true : false;
   }
 
-  FormStatus validationStatus(Map<String, String?> map) {
+  FormStatus validationStatus(
+      {List<String?>? fields, required Map<String, String?> errorMap}) {
+    //List<String?> formValuesMap = [fname, lname, email, pwd, cpwd, phone];
     List<String?> errorMapToList =
-        map.values.toList(); // Set error map to list of values
+        errorMap.values.toList(); // Set error map to list of values
     // check if every value == null (i.e all field validated(No error text)
-    return (errorMapToList.every((e) => (e == null)))
+    return (errorMapToList.every((e) => (e == null)) &&
+            fields!.every((e) => (e != null)))
         ? FormStatus.valid
         : FormStatus.invalid;
   }
@@ -111,7 +118,7 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       }
       yield state.copyWith(
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(errorMap: this.errorMessage),
       );
     }
     //
@@ -123,7 +130,9 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       }
       yield state.copyWith(
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          errorMap: this.errorMessage,
+        ),
       );
     }
     //
@@ -135,7 +144,7 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       }
       yield state.copyWith(
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(errorMap: this.errorMessage),
       );
     }
     //
@@ -147,7 +156,7 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       }
       yield state.copyWith(
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(errorMap: this.errorMessage),
       );
     }
     //
@@ -160,7 +169,7 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       }
       yield state.copyWith(
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(errorMap: this.errorMessage),
       );
     }
     //
@@ -172,7 +181,7 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       }
       yield state.copyWith(
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(errorMap: this.errorMessage),
       );
     }
     //
@@ -186,11 +195,23 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
         if (event.firstName != null)
           this.errorMessage = errorTextMap(firstName: errorMsg['firstName']);
       }
+
       yield state.copyWith(
         firstName: event.firstName,
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          fields: [
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.password,
+            state.confirmPassword,
+            state.phone
+          ],
+          errorMap: this.errorMessage,
+        ),
       );
+      print(state);
     }
     //
     else if (event is LastNameChanged) {
@@ -203,7 +224,17 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       yield state.copyWith(
         lastName: event.lastName,
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          fields: [
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.password,
+            state.confirmPassword,
+            state.phone
+          ],
+          errorMap: this.errorMessage,
+        ),
       );
     }
     //
@@ -217,7 +248,17 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       yield state.copyWith(
         email: event.email,
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          fields: [
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.password,
+            state.confirmPassword,
+            state.phone
+          ],
+          errorMap: this.errorMessage,
+        ),
       );
     }
     //
@@ -231,7 +272,17 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       yield state.copyWith(
         password: event.password,
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          fields: [
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.password,
+            state.confirmPassword,
+            state.phone
+          ],
+          errorMap: this.errorMessage,
+        ),
       );
     }
     //
@@ -246,7 +297,17 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       yield state.copyWith(
         confirmPassword: event.confirmPassword,
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          fields: [
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.password,
+            state.confirmPassword,
+            state.phone
+          ],
+          errorMap: this.errorMessage,
+        ),
       );
     }
     //
@@ -262,8 +323,59 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
       yield state.copyWith(
         phone: event.phone,
         errorText: this.errorMessage,
-        formStatus: validationStatus(this.errorMessage),
+        formStatus: validationStatus(
+          fields: [
+            state.firstName,
+            state.lastName,
+            state.email,
+            state.password,
+            state.confirmPassword,
+            state.phone
+          ],
+          errorMap: this.errorMessage,
+        ),
       );
+    }
+    //
+    else if (event is RegisterSubmit) {
+      yield state.copyWith(registerStatus: RegisterStatus.loading);
+      //Check duplicate phone and yield error
+      final FirebaseAuth _auth = FirebaseAuth.instance;
+      try {
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+                email: state.email!, password: state.password!);
+        if (userCredential != null) {
+          User user = userCredential.user!;
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'firstName': state.firstName,
+            'lastName': state.lastName,
+            'email': state.email,
+            'phone': state.phone,
+            'location': {},
+            'is_admin': false,
+            'is_vendor': false,
+            'time': FieldValue.serverTimestamp(),
+          });
+          yield state.copyWith(registerStatus: RegisterStatus.success);
+        } //else {
+        //   yield state.copyWith(registerStatus: RegisterStatus.error);
+        // }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          this.errorMessage =
+              errorTextMap(email: 'This email address is already in use');
+          yield state.copyWith(registerStatus: RegisterStatus.error);
+        }
+      } catch (e) {
+        yield state.copyWith(registerStatus: RegisterStatus.error);
+        print(e);
+      }
+      //   // await Future.delayed(Duration(seconds: 3));
+      //   // yield state.copyWith(registerStatus: RegisterStatus.success);
     }
   }
 }
