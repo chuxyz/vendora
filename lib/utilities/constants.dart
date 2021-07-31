@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const String kAppName = 'Vendora';
-const Color kThemeColor = Colors.blueAccent;
+const Color kThemeColor = Colors.deepPurpleAccent;
 const Widget kTextFieldSpacing = SizedBox(height: 10.0, width: double.infinity);
 // boxShadow: [
 // BoxShadow(

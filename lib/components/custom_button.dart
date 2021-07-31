@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vendora/bloc/login_modal_bloc/modal_bloc.dart';
 import 'package:vendora/screens/register_screen.dart';
 import 'package:vendora/utilities/constants.dart';
 
@@ -21,6 +20,8 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
+        elevation: 10.0,
+        onPrimary: Colors.white,
         primary: this.buttonColor ?? kThemeColor,
         padding: EdgeInsets.symmetric(horizontal: 5, vertical: 15),
         textStyle: TextStyle(

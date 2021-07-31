@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vendora/components/theme_data.dart';
+import 'package:vendora/screens/register_vendor_screen.dart';
+import 'package:vendora/screens/settings_screen.dart';
 import 'package:vendora/screens/register_screen.dart';
 import 'package:vendora/screens/start_screen.dart';
 import 'package:vendora/screens/search_result_screen.dart';
@@ -22,12 +24,14 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '$kAppName', // App name
       theme: lightTheme,
-      initialRoute: StartScreen.routeID,
+      initialRoute: RegisterVendorScreen.routeID,
       // Define routes
       routes: {
         StartScreen.routeID: (context) => StartScreen(),
         SearchResultScreen.routeID: (context) => SearchResultScreen(),
         RegisterScreen.routeID: (context) => RegisterScreen(),
+        SettingsScreen.routeID: (context) => SettingsScreen(),
+        RegisterVendorScreen.routeID: (context) => RegisterVendorScreen(),
       },
       debugShowCheckedModeBanner: false,
     );

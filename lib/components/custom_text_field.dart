@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
     this.labelText,
     this.obscureText,
     this.errorText,
+    this.maxLine,
+    this.keyboardType,
     this.textInputAction,
     Key? key,
   }) : super(key: key);
@@ -16,7 +18,9 @@ class CustomTextField extends StatelessWidget {
   final String? labelText;
   final bool? obscureText;
   final String? errorText;
+  final int? maxLine;
   final FocusNode? focusNode;
+  final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final void Function(String) onChanged;
 
@@ -25,8 +29,9 @@ class CustomTextField extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 5.0),
       child: TextFormField(
+        maxLines: maxLine ?? null,
         autocorrect: true,
-        keyboardType: TextInputType.visiblePassword,
+        keyboardType: keyboardType ?? TextInputType.visiblePassword,
         onChanged: this.onChanged,
         textInputAction: textInputAction ?? null,
         focusNode: this.focusNode,
@@ -35,23 +40,6 @@ class CustomTextField extends StatelessWidget {
           hintText: this.hintText,
           labelText: this.labelText,
           errorText: this.errorText ?? null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black38,
-              width: 1.5,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.blueAccent,
-              width: 2.0,
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          ),
         ),
       ),
     );

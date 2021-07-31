@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:vendora/utilities/auth_utils.dart';
 import 'package:vendora/utilities/constants.dart';
 
 part 'register_events.dart';
@@ -10,7 +11,7 @@ part 'register_states.dart';
 enum FormStatus { valid, invalid }
 enum RegisterStatus { initial, loading, error, success }
 
-class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
+class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
   RegisterBloc()
       : super(
           RegisterStates(
@@ -26,32 +27,6 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
         );
 
   Map<String, String?> errorMessage = {}; // initialized error message
-
-  bool isName(String? name) {
-    RegExp nameRegex = RegExp(r'^[a-zA-Z]{2,}');
-    return nameRegex.hasMatch(name ?? '') ? true : false;
-  }
-
-  bool isEmail(String? email) {
-    RegExp emailRegex = RegExp(
-      r'^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$',
-    );
-    return emailRegex.hasMatch(email ?? '') ? true : false;
-  }
-
-  bool isPassword(String? password) {
-    RegExp passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
-    return passwordRegex.hasMatch(password ?? '') ? true : false;
-  }
-
-  bool passwordMatched(String? password1, String? password2) {
-    return (password1 == password2) ? true : false;
-  }
-
-  bool isPhone(String? phone) {
-    RegExp phoneRegex = RegExp(r'(^(?:[+0])?[0-9]{11,13}$)');
-    return phoneRegex.hasMatch(phone ?? '') ? true : false;
-  }
 
   FormStatus validationStatus(
       {List<String?>? fields, required Map<String, String?> errorMap}) {
@@ -351,10 +326,13 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> {
               .collection('users')
               .doc(user.uid)
               .set({
+            'userId': user.uid,
             'firstName': state.firstName,
             'lastName': state.lastName,
             'email': state.email,
+            'emailVerified': false,
             'phone': state.phone,
+            'photoUrl': '',
             'location': {},
             'is_admin': false,
             'is_vendor': false,

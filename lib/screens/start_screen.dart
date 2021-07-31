@@ -2,12 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vendora/bloc/login_modal_bloc/modal_bloc.dart';
+import 'package:vendora/bloc/modal_bloc/modal_bloc.dart';
 import 'package:vendora/bloc/vendor_search_bloc/vendor_search_bloc.dart';
 import 'package:vendora/components/foot_navigation_bar.dart';
 import 'package:vendora/components/search_bar.dart';
+import 'package:vendora/components/search_text_field.dart';
 import 'package:vendora/screens/search_result_screen.dart';
-import 'package:vendora/utilities/authentication.dart';
+import 'package:vendora/utilities/auth_utils.dart';
 import 'package:vendora/utilities/constants.dart';
 import 'search_screen.dart';
 
@@ -26,6 +27,7 @@ class _StartScreenState extends State<StartScreen> {
 
   late bool _isVisible;
   late ScrollController _hideBottomNavController;
+
   @override
   void initState() {
     super.initState();
@@ -94,7 +96,7 @@ class StartScreenView extends StatefulWidget {
 }
 
 class _StartScreenViewState extends State<StartScreenView> {
-  final Authentication auth = Authentication();
+  final AuthUtils auth = AuthUtils();
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +107,7 @@ class _StartScreenViewState extends State<StartScreenView> {
         BlocBuilder<ModalBloc, ModalState>(
           builder: (context, state) {
             return SliverAppBar(
+              elevation: 0.0,
               pinned: true,
               stretch: true,
               expandedHeight: 150.0,
@@ -132,36 +135,22 @@ class _StartScreenViewState extends State<StartScreenView> {
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(0.0),
                 child: AppBar(
+                  elevation: 0.0,
                   title: Container(
                     margin: EdgeInsets.symmetric(vertical: 5.0),
-                    child: TextFormField(
+                    child: SearchTextField(
+                      hintText: 'Search for Vendors',
+                      readOnly: true,
+                      autoFocus: false,
+                      suffixIcon: IconButton(
+                        color: kThemeColor,
+                        icon: Icon(Icons.search),
+                        onPressed: () {},
+                      ),
                       onTap: () async {
                         Navigator.pushNamed(context, SearchResultScreen.routeID,
                             arguments: {'vendorCategoryId': 0});
-                        // await showSearch<Vendor>(
-                        //   context: context,
-                        //   delegate: VendorSearchDelegate(
-                        //     context: context,
-                        //     bloc: BlocProvider.of<VendorSearchBloc>(context),
-                        //   ),
-                        // );
                       },
-                      readOnly: true,
-                      autofocus: false,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.only(top: 5, left: 15),
-                        suffixIcon: IconButton(
-                          color: kThemeColor,
-                          icon: Icon(Icons.search),
-                          onPressed: () {},
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Search',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
                     ),
                   ),
                 ),

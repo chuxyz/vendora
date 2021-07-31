@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vendora/utilities/constants.dart';
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
@@ -11,21 +12,32 @@ ThemeData lightTheme = ThemeData(
   backgroundColor: Colors.grey,
   buttonTheme: ButtonThemeData(
     padding: EdgeInsets.symmetric(horizontal: 5, vertical: 15),
+    disabledColor: Colors.purpleAccent,
     buttonColor: Colors.deepOrangeAccent,
   ),
   inputDecorationTheme: InputDecorationTheme(
-    enabledBorder: OutlineInputBorder(
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
       borderSide: BorderSide(
         style: BorderStyle.solid,
         width: 1.0,
-        color: Colors.grey,
+        color: kThemeColor,
+      ),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
+      borderSide: BorderSide(
+        style: BorderStyle.solid,
+        width: 1.0,
+        color: kThemeColor,
       ),
     ),
     focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10.0),
       borderSide: BorderSide(
         style: BorderStyle.solid,
         width: 1.0,
-        color: Colors.grey,
+        color: Colors.deepPurple,
       ),
     ),
   ),

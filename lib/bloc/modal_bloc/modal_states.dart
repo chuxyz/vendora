@@ -12,6 +12,8 @@ class ModalState extends Equatable {
     required this.email,
     required this.password,
     required this.firebaseUser,
+    required this.snackBarError,
+    required this.snackBarSuccess,
   });
 
   final String googleButtonText;
@@ -24,6 +26,8 @@ class ModalState extends Equatable {
   final String? email;
   final String? password;
   final User? firebaseUser;
+  final String? snackBarError;
+  final String? snackBarSuccess;
   //static String registerRoute = RegisterScreen.routeID;
 
   ModalState copyWith({
@@ -37,6 +41,8 @@ class ModalState extends Equatable {
     String? email,
     String? password,
     User? firebaseUser,
+    String? snackBarError,
+    String? snackBarSuccess,
   }) {
     return ModalState(
       googleButtonText: googleButtonText ?? this.googleButtonText,
@@ -49,6 +55,8 @@ class ModalState extends Equatable {
       email: email ?? this.email,
       password: password ?? this.password,
       firebaseUser: firebaseUser ?? this.firebaseUser,
+      snackBarError: snackBarError ?? this.snackBarError,
+      snackBarSuccess: snackBarSuccess ?? this.snackBarSuccess,
     );
   }
 
@@ -64,5 +72,7 @@ class ModalState extends Equatable {
         email,
         password,
         firebaseUser,
+        snackBarError,
+        snackBarSuccess,
       ];
 }

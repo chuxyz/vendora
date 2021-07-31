@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "418425786886-hk3k0u8dndjnk0g921s0d6nk95m0alb9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.arifftech.vendora",
+            "certificate_hash": "abef8efebcae1834edb24ce0dbccda3a6316c8c4"
+          }
+        },
+        {
           "client_id": "418425786886-o91p1kt3gmsllpme2a0rh4qrce938a9j.apps.googleusercontent.com",
           "client_type": 3
         }
