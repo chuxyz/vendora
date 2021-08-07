@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vendora/screens/register_screen.dart';
 import 'package:vendora/utilities/constants.dart';
 
 class CustomButton extends StatelessWidget {

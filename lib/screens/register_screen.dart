@@ -6,6 +6,7 @@ import 'package:vendora/components/custom_button.dart';
 import 'package:vendora/components/custom_progress_indicator.dart';
 import 'package:vendora/components/custom_text_field.dart';
 import 'package:vendora/screens/start_screen.dart';
+import 'package:vendora/utilities/auth_utils.dart';
 import 'package:vendora/utilities/constants.dart';
 
 class RegisterScreen extends StatelessWidget {

@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CustomDropDownButton extends StatelessWidget {
-  const CustomDropDownButton({
+  CustomDropDownButton({
     Key? key,
     this.value,
     this.onChanged,
-    this.items,
+    required this.items,
     required this.hintText,
   }) : super(key: key);
 
   final String? value;
-  final Function()? onChanged;
-  final List<dynamic>? items;
+  final void Function(String?)? onChanged;
+  final List<String> items;
   final String hintText;
 
   @override
@@ -22,7 +22,7 @@ class CustomDropDownButton extends StatelessWidget {
       child: DropdownButtonFormField<String>(
         isExpanded: true,
         hint: Text(hintText),
-        value: null,
+        value: value,
         icon: const Icon(
           Icons.arrow_downward,
           color: Colors.deepPurpleAccent,
@@ -30,9 +30,8 @@ class CustomDropDownButton extends StatelessWidget {
         iconSize: 24,
         elevation: 16,
         style: const TextStyle(color: Colors.deepPurple),
-        onChanged: (value) {},
-        items: <String>['One', 'Two', 'Free', 'Four']
-            .map<DropdownMenuItem<String>>((String value) {
+        onChanged: onChanged,
+        items: items.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
             child: Text(value),

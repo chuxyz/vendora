@@ -1,16 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vendora/bloc/modal_bloc/modal_bloc.dart';
-import 'package:vendora/bloc/vendor_search_bloc/vendor_search_bloc.dart';
 import 'package:vendora/components/foot_navigation_bar.dart';
-import 'package:vendora/components/search_bar.dart';
 import 'package:vendora/components/search_text_field.dart';
 import 'package:vendora/screens/search_result_screen.dart';
 import 'package:vendora/utilities/auth_utils.dart';
 import 'package:vendora/utilities/constants.dart';
-import 'search_screen.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({Key? key}) : super(key: key);

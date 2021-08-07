@@ -1,14 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:vendora/bloc/modal_bloc/modal_bloc.dart';
 import 'package:vendora/components/custom_button.dart';
 import 'package:vendora/screens/settings_screen.dart';
 import 'package:vendora/screens/register_screen.dart';
-import 'package:vendora/screens/start_screen.dart';
 import 'package:vendora/utilities/auth_utils.dart';
 import 'package:vendora/utilities/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vendora/bloc/modal_bloc/modal_bloc.dart';
 
 import 'custom_progress_indicator.dart';
 

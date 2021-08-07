@@ -5,7 +5,7 @@ import 'package:vendora/utilities/constants.dart';
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   visualDensity: VisualDensity.adaptivePlatformDensity,
-  primarySwatch: Colors.grey,
+  primarySwatch: Colors.deepPurple,
   primaryColor: Colors.white,
   accentColor: Colors.black,
   focusColor: Colors.white70,

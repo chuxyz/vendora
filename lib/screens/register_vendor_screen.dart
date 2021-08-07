@@ -5,6 +5,7 @@ import 'package:vendora/components/custom_button.dart';
 import 'package:vendora/components/custom_drop_down_button.dart';
 import 'package:vendora/components/custom_text_field.dart';
 import 'package:vendora/utilities/constants.dart';
+import 'package:vendora/utilities/auth_utils.dart';
 
 class RegisterVendorScreen extends StatelessWidget {
   const RegisterVendorScreen({Key? key}) : super(key: key);
@@ -29,6 +30,59 @@ class RegisterVendorScreenView extends StatefulWidget {
 }
 
 class _RegisterVendorScreenViewState extends State<RegisterVendorScreenView> {
+  final AuthUtils au = AuthUtils();
+
+  final _brandNameFocusNode = FocusNode();
+  final _descriptionFocusNode = FocusNode();
+  final _tagFocusNode = FocusNode();
+  final _emailFocusNode = FocusNode();
+  final _phoneFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    _brandNameFocusNode.addListener(() {
+      if (!_brandNameFocusNode.hasFocus) {
+        BlocProvider.of<RegisterVendorBloc>(context).add(BrandNameUnfocused());
+      }
+    });
+
+    _descriptionFocusNode.addListener(() {
+      if (!_descriptionFocusNode.hasFocus)
+        BlocProvider.of<RegisterVendorBloc>(context)
+            .add(DescriptionUnfocused());
+    });
+
+    _tagFocusNode.addListener(() {
+      if (!_tagFocusNode.hasFocus) {
+        BlocProvider.of<RegisterVendorBloc>(context).add(TagUnfocused());
+      }
+    });
+
+    _emailFocusNode.addListener(() {
+      if (!_emailFocusNode.hasFocus) {
+        BlocProvider.of<RegisterVendorBloc>(context).add(BrandEmailUnfocused());
+      }
+    });
+
+    _phoneFocusNode.addListener(() {
+      if (!_phoneFocusNode.hasFocus) {
+        BlocProvider.of<RegisterVendorBloc>(context).add(BrandPhoneUnfocused());
+      }
+    });
+    //BlocProvider.of<RegisterVendorBloc>(context).add(LoadCategoryData());
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _brandNameFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _tagFocusNode.dispose();
+    _emailFocusNode.dispose();
+    _phoneFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,106 +130,119 @@ class _RegisterVendorScreenViewState extends State<RegisterVendorScreenView> {
                       child: Column(
                         children: [
                           CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(BrandNameChanged(brandName: value));
+                            },
+                            focusNode: _brandNameFocusNode,
                             hintText: 'Brand Name*',
                             labelText: 'Brand Name*',
                             textInputAction: TextInputAction.next,
-                            errorText: null,
+                            errorText: state.errorText['brandName'],
+                          ),
+                          kTextFieldSpacing,
+                          RawMaterialButton(
+                            fillColor: Colors.purpleAccent.withOpacity(0.5),
+                            child: Icon(
+                              Icons.add_photo_alternate_rounded,
+                              color: Colors.white,
+                            ),
+                            elevation: 8,
+                            onPressed: () async {},
+                            padding: EdgeInsets.all(15),
+                            shape: CircleBorder(),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text('Add Logo'),
                           ),
                           kTextFieldSpacing,
                           CustomTextField(
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(DescriptionChanged(description: value));
+                            },
                             keyboardType: TextInputType.multiline,
                             maxLine: 3,
-                            focusNode: null,
+                            focusNode: _descriptionFocusNode,
                             hintText: 'Brief description about business',
                             labelText: 'Description*',
                             textInputAction: TextInputAction.next,
-                            errorText: null,
+                            errorText: state.errorText['description'],
                           ),
                           kTextFieldSpacing,
                           CustomTextField(
-                            onChanged: (value) {},
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(TagChanged(tags: value));
+                            },
                             keyboardType: TextInputType.multiline,
-                            focusNode: null,
+                            focusNode: _tagFocusNode,
                             hintText: 'E.g. Food, Wines, ...',
                             labelText: 'Tags*',
                             textInputAction: TextInputAction.next,
-                            errorText: null,
+                            errorText: state.errorText['tags'],
                           ),
                           kTextFieldSpacing,
                           CustomDropDownButton(
+                            items: [],
                             hintText: 'Business Category*',
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(CategoryChanged(category: value));
+                            },
                           ),
                           kTextFieldSpacing,
                           CustomDropDownButton(
+                            items: ngStates,
                             hintText: 'State*',
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(StateNameChanged(stateName: value));
+                            },
                           ),
                           kTextFieldSpacing,
                           CustomDropDownButton(
+                            items: state.allLga,
                             hintText: 'LGA*',
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(LgaNameChanged(lgaName: value));
+                            },
                           ),
                           kTextFieldSpacing,
                           CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
-                            hintText: 'Website',
-                            labelText: 'Website',
-                            textInputAction: TextInputAction.next,
-                            errorText: null,
-                          ),
-                          kTextFieldSpacing,
-                          CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(BrandEmailChanged(email: value));
+                            },
+                            focusNode: _emailFocusNode,
                             hintText: 'Business Email',
                             labelText: 'Business Email',
                             textInputAction: TextInputAction.next,
-                            errorText: null,
+                            errorText: state.errorText['email'],
                           ),
                           kTextFieldSpacing,
                           CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
+                            onChanged: (value) {
+                              BlocProvider.of<RegisterVendorBloc>(context)
+                                  .add(BrandPhoneChanged(phone: value));
+                            },
+                            focusNode: _phoneFocusNode,
                             hintText: 'Business Phone',
                             labelText: 'Business Phone',
                             textInputAction: TextInputAction.done,
-                            errorText: null,
-                          ),
-                          kTextFieldSpacing,
-                          CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
-                            hintText: 'Facebook',
-                            labelText: 'Facebook',
-                            textInputAction: TextInputAction.done,
-                            errorText: null,
-                          ),
-                          kTextFieldSpacing,
-                          CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
-                            hintText: 'Twitter',
-                            labelText: 'Twitter',
-                            textInputAction: TextInputAction.done,
-                            errorText: null,
-                          ),
-                          kTextFieldSpacing,
-                          CustomTextField(
-                            onChanged: (value) {},
-                            focusNode: null,
-                            hintText: 'Instagram',
-                            labelText: 'Instagram',
-                            textInputAction: TextInputAction.done,
-                            errorText: null,
+                            errorText: state.errorText['phone'],
                           ),
                           kTextFieldSpacing,
                           SizedBox(
                             width: double.infinity,
                             child: CustomButton(
                               buttonLabel: 'Register Vendor',
-                              onPressed: () {},
+                              onPressed:
+                                  (state.formStatus == FormStatus.invalid)
+                                      ? null
+                                      : () {},
                             ),
                           )
                         ],

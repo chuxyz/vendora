@@ -3,13 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:vendora/utilities/auth_utils.dart';
-import 'package:vendora/utilities/constants.dart';
 
 part 'register_events.dart';
 part 'register_states.dart';
-
-enum FormStatus { valid, invalid }
-enum RegisterStatus { initial, loading, error, success }
 
 class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
   RegisterBloc()
@@ -27,18 +23,15 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
         );
 
   Map<String, String?> errorMessage = {}; // initialized error message
-
-  FormStatus validationStatus(
-      {List<String?>? fields, required Map<String, String?> errorMap}) {
-    //List<String?> formValuesMap = [fname, lname, email, pwd, cpwd, phone];
-    List<String?> errorMapToList =
-        errorMap.values.toList(); // Set error map to list of values
-    // check if every value == null (i.e all field validated(No error text)
-    return (errorMapToList.every((e) => (e == null)) &&
-            fields!.every((e) => (e != null)))
-        ? FormStatus.valid
-        : FormStatus.invalid;
-  }
+  Map<String, String> errorMsg = {
+    'firstName': 'First name must be alphabet and greater than two characters',
+    'lastName': 'Last name must be alphabet and greater than two characters',
+    'email': 'It seems you didn\'t type a valid email address',
+    'password':
+        'Password should be at least 8 characters and contain at least one letter and number',
+    'phone': 'You must have typed an invalid phone number. Try again!',
+    'confirmPassword': 'Password does not match',
+  };
 
   @override
   Stream<RegisterStates> mapEventToState(RegisterEvents event) async* {
@@ -52,6 +45,11 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
       String? phone,
     }) {
       return {
+        // If error message had been set to '', set it to null (to clear error text)
+        // else if it is set to a value (an error message) that is not null,
+        // use the value that it is set to. Else(it is set to null) use the previous state's value
+        // N.B '' is used to set errorText to null to differentiate from the inital state null to a null
+        // value after the user started typing
         'firstName': firstName == ''
             ? null
             : firstName != null
@@ -186,7 +184,6 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
           errorMap: this.errorMessage,
         ),
       );
-      print(state);
     }
     //
     else if (event is LastNameChanged) {
@@ -294,7 +291,6 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
         if (event.phone != null)
           this.errorMessage = errorTextMap(phone: errorMsg['phone']);
       }
-      print(this.errorMessage);
       yield state.copyWith(
         phone: event.phone,
         errorText: this.errorMessage,
@@ -350,7 +346,6 @@ class RegisterBloc extends Bloc<RegisterEvents, RegisterStates> with AuthUtils {
         }
       } catch (e) {
         yield state.copyWith(registerStatus: RegisterStatus.error);
-        print(e);
       }
       //   // await Future.delayed(Duration(seconds: 3));
       //   // yield state.copyWith(registerStatus: RegisterStatus.success);

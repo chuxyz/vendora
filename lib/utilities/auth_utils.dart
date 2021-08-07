@@ -1,13 +1,28 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
+
+enum FormStatus { valid, invalid }
+enum RegisterStatus { initial, loading, error, success }
 
 class AuthUtils {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  FormStatus validationStatus(
+      {List<String?>? fields, required Map<String, String?> errorMap}) {
+    //List<String?> formValuesMap = [fname, lname, email, pwd, cpwd, phone];
+    List<String?> errorMapToList =
+        errorMap.values.toList(); // Set error map to list of values
+    // check if every value == null (i.e all field validated(No error text)
+    return (errorMapToList.every((e) => (e == null)) &&
+            fields!.every((e) => (e != null)))
+        ? FormStatus.valid
+        : FormStatus.invalid;
+  }
 
   bool isName(String? name) {
     RegExp nameRegex = RegExp(r'^[a-zA-Z]{2,}');
@@ -54,16 +69,17 @@ class AuthUtils {
     return displayName.toString().split(' ');
   }
 
-  bool isDescription(String description) {
-    return (description.length > 2) ? true : false;
+  bool isDescription(String? description) {
+    return ((description ?? '').length > 10) ? true : false;
   }
 
-  bool isTag(String tags) {
+  bool isTag(String? tags) {
     // Tags are comma separated String. Split them into a List
-    List<String> tagList = tags.split(',');
+    List<String> tagList = (tags ?? '').split(',');
     // Create new list where each String item length is less than 3 chars
     List<String> newTagList =
         tagList.where((e) => e.trim().length < 3).toList();
+        // Retur true if lenght of new list is 0. Else return false
     return (newTagList.length < 1) ? true : false;
   }
 
@@ -75,5 +91,17 @@ class AuthUtils {
         : (urlRegex.hasMatch(url))
             ? true
             : false;
+  }
+
+  Future<File> getImage() async {
+    ImagePicker picker = ImagePicker();
+    // Let user select photo from gallery
+    XFile? pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    File image =
+        File(pickedFile!.path); // Use if you only need a single picture
+    return image;
   }
 }
